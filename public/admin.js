@@ -30,7 +30,20 @@ let currentConfig = null;
 // --- Authentication ---
 
 supabaseClient.auth.getSession().then(({ data: { session } }) => {
-    if (session) showDashboard();
+    if (session) {
+        showDashboard();
+    } else {
+        // Invisibility Cloak: Only show login if magic param is present
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('access') === 'secure') {
+            loginSection.classList.remove('hidden');
+            loginSection.style.display = 'block';
+        } else {
+            // Simulate 404 / Non-existence
+            document.title = '404 Not Found';
+            document.body.innerHTML = '<div style="text-align:center; padding:50px; font-family:sans-serif;"><h1>404 Not Found</h1><p>The page you are looking for does not exist.</p></div>';
+        }
+    }
 });
 
 loginForm.addEventListener('submit', async (e) => {
