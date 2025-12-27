@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaplaincy Admin</title>
+    <!-- Use same fonts as public site -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Admin-specific overrides/additions - keeping style.css for shared base */
+        body { 
+            background-color: #f0f0f0; /* Slightly darker than content */
+        }
+        
+        .admin-container { 
+            max-width: 800px; /* Wider for table */
+            margin: 20px auto; 
+            padding: 30px; 
+            background: #fafafa; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+        }
+
+        /* Zones */
+        .section { 
+            margin-bottom: 30px; 
+            padding-bottom: 20px; 
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h2 { 
+            font-family: 'Merriweather', serif;
+            font-size: 1.1rem; 
+            margin-bottom: 15px; 
+            color: #333;
+        }
+
+        /* Header Zone A */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .header-title {
+            font-family: 'Merriweather', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .logout-btn-small {
+            background: none;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            color: #666;
+            width: auto; /* Override full width */
+        }
+
+        /* Form Layouts Zone B */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .config-grid { grid-template-columns: 1fr; }
+        }
+
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        /* Fix for checkbox visibility overridden by global input styles */
+        input[type="checkbox"] {
+            -webkit-appearance: checkbox;
+            appearance: checkbox; /* Restore native appearance */
+            width: auto;
+            margin-right: 5px;
+            height: auto;
+        }
+
+        /* Zone C Table */
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #fafafa; }
+        
+        .winner-row {
+            background-color: #e8f5e9 !important; /* Subtle green highlight */
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-correct { background-color: #d4edda; color: #155724; }
+        .badge-wrong { background-color: #f8d7da; color: #721c24; }
+        .badge-winner { background-color: #fff3cd; color: #856404; }
+
+        /* Zone D Winner */
+        .winner-card {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .copy-btn {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            color: #333;
+            width: auto;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        /* Utility */
+        .hidden { display: none !important; }
+        .muted-btn { background-color: #6c757d; }
+        .danger-btn { background-color: #dc3545; }
+        .success-btn { background-color: #28a745; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <!-- Login Section -->
+        <div id="login-section">
+            <header class="zone-a" style="text-align: center; margin-bottom: 30px;">
+                <h1>Chaplaincy Admin</h1>
+                <div class="divider"></div>
+            </header>
+            <div style="max-width: 400px; margin: 0 auto;">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email" class="helper-text">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label for="password" class="helper-text">Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" style="margin-top: 20px;">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="hidden">
+            
+            <!-- Zone A: Header -->
+            <header class="admin-header section">
+                <div class="header-title">
+                    <span style="font-size: 1.5rem; vertical-align: middle;">✝</span> 
+                    Chaplaincy Admin
+                </div>
+                <button id="logout-btn" class="logout-btn-small">Logout</button>
+            </header>
+
+            <!-- Zone B: Weekly Config -->
+            <section class="section">
+                <h2>Weekly Bulletin Configuration</h2>
+                <form id="config-form">
+                    <div class="config-grid">
+                        <div class="form-group">
+                            <label for="week-label" class="helper-text">Week Label</label>
+                            <input type="text" id="week-label" placeholder="e.g. Week 1 (Oct 2-8)" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valid-code" class="helper-text">Valid Code / Word</label>
+                            <input type="text" id="valid-code" placeholder="e.g. SAINT" required>
+                        </div>
+                    </div>
+
+                    <div class="config-grid">
+                        <div class="form-group">
+                            <label for="active-from" class="helper-text">Active From</label>
+                            <input type="datetime-local" id="active-from" required>
+                            <small style="color: #666; font-size: 0.8rem;">When submissions are allowed to begin.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="expires-at" class="helper-text">Expires At</label>
+                            <input type="datetime-local" id="expires-at" required>
+                            <small style="color: #666; font-size: 0.8rem;">When submissions automatically close.</small>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Status: </strong> <span id="status-indicator" style="font-weight: 500; color: #555;">Loading...</span>
+                    </div>
+
+                    <div class="toggle-wrapper" style="margin-bottom: 15px;">
+                        <input type="checkbox" id="submissions-open" style="width: auto;">
+                        <label for="submissions-open">Submissions Open</label>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="success-btn">Save / Update</button>
+                        <!-- Close button is separate action to prevent accidental submit, implemented via JS helper or separate button below if strictly needed, but toggle above is cleaner. 
+                             Requirements asked for "Close Submissions" button. I will add it as a shortcut. -->
+                    </div>
+                </form>
+                <div style="margin-top: 10px;">
+                    <button id="quick-close-btn" class="muted-btn" style="width: auto; padding: 10px 15px; font-size: 0.9rem;">Lock / Close Submissions</button>
+                    <p class="helper-text" style="margin-top: 5px; font-size: 0.8rem;">
+                        Updating the code/label resets the view for that week.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Zone D: Winner Display (Moved up for visibility as per priority) -->
+            <section class="section">
+                <h2>Winner</h2>
+                <div id="winner-display">
+                    <!-- JS will populate -->
+                    <p class="helper-text">No winner selected yet.</p>
+                </div>
+            </section>
+
+            <!-- Zone C: Submissions Table -->
+            <section class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2>Submissions</h2>
+                    <button id="refresh-btn" class="logout-btn-small">Refresh</button>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table id="submissions-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Code</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissions-body">
+                            <!-- JS will populate -->
+                            <tr><td colspan="5" style="text-align: center;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Zone E: Submission Control -->
+            <section class="section" style="border-bottom: none;">
+                <h2>Danger Zone</h2>
+                <button id="close-all-btn" class="danger-btn">Close All Submissions Immediately</button>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

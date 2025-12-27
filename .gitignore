@@ -1,0 +1,11 @@
+# Supabase
+supabase/.temp/
+.env
+.env.local
+
+# System
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/

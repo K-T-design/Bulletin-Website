@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mass Code</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Zone A: Top Header -->
+        <header class="zone-a">
+            <!-- Optional tiny cross -->
+            <div class="cross">✝</div>
+            <h1>University Catholic Chaplaincy</h1>
+        </header>
+
+        <div class="divider"></div>
+
+        <!-- Content Wrapper (swaps between Form and Response) -->
+        <main id="main-content">
+            <!-- Zone B: Instruction -->
+            <div id="instruction-zone" class="zone-b">
+                <p class="instruction-text">Enter the word or code from this week’s bulletin.</p>
+                <p class="helper-text">Your details are used only to contact the winner.</p>
+            </div>
+
+            <!-- Zone C: Form -->
+            <form id="submission-form" class="zone-c">
+                <div class="form-group">
+                    <label for="firstName" class="sr-only">First Name</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="First Name" required autocomplete="given-name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneNumber" class="sr-only">Phone Number</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" required autocomplete="tel">
+                    <!-- Helper text in design prompt says "Used only to contact the selected entry", but I put that in Zone B per prompt. 
+                         Prompt says: Phone Number ... helper text: “Used only to contact the selected entry”
+                         I will add it below the input if needed or rely on the Zone B text.
+                         Let's add a tiny note if strictly required by field spec.
+                    -->
+                </div>
+
+                <div class="form-group">
+                    <label for="code" class="sr-only">Bulletin Word / Code</label>
+                    <input type="text" id="code" name="code" placeholder="Bulletin Word / Code" required autocomplete="off">
+                </div>
+
+                <button type="submit" id="submit-btn">Submit</button>
+            </form>
+        </main>
+
+        <!-- Zone D: Response (Hidden by default) -->
+        <div id="response-zone" class="zone-d hidden" aria-live="polite">
+            <p id="response-message"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
