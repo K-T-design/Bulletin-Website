@@ -25,7 +25,7 @@ body {
     line-height: 1.6;
     display: flex;
     justify-content: center;
-    align-items: center; /* Center vertically for larger screens */
+    align-items: flex-start; /* Align top to prevent clipping on long pages */
     min-height: 100vh;
     padding: 20px;
 }
@@ -33,7 +33,7 @@ body {
 .container {
     width: 100%;
     max-width: 480px; /* Mobile-first but constrained on desktop */
-    margin: 0 auto;
+    margin: 40px auto; /* Add top margin for visual balance */
     text-align: center;
     padding: 20px 0;
 }
@@ -114,6 +114,7 @@ input {
     background-color: var(--input-bg);
     transition: border-color 0.2s, outline 0.2s;
     -webkit-appearance: none; /* Remove iOS shadows */
+    appearance: none;
 }
 
 input:focus {
@@ -181,4 +182,49 @@ button:disabled {
     .container {
         width: 90%;
     }
+}
+
+/* SEO Content Section - Keeping it calm and secondary */
+.seo-content {
+    margin-top: 40px;
+    padding-bottom: 40px;
+    text-align: left;
+    line-height: 1.7;
+}
+
+.seo-content h2 {
+    font-family: var(--font-header);
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.seo-content h3 {
+    font-family: var(--font-header);
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.seo-content p {
+    margin-bottom: 15px;
+}
+
+.seo-content ul {
+    margin-bottom: 15px;
+    padding-left: 20px;
+}
+
+.seo-content li {
+    margin-bottom: 8px;
+}
+
+.seo-content strong {
+    font-weight: 600;
+    color: #333;
 }
