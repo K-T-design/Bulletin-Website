@@ -4,4 +4,4 @@ Disallow: /admin.html
 Disallow: /admin/*
 Allow: /
 
-Sitemap: https://www.yoursite.com/sitemap.xml
+Sitemap: https://themasscode.com/sitemap.xml
